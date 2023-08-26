@@ -31,27 +31,16 @@
             v-model="nameVal"
           />
           <div class="text">请选择宝宝性别</div>
-          <van-radio-group v-model="sexType" class="sex">
-            <van-radio name="男">
-              <template #icon="props">
-                <img
-                  class="img-icon"
-                  :src="props.checked ? activeIconMan : inactiveIconManChecked"
-                />
-              </template>
-            </van-radio>
-            <van-radio name="女">
-              <template #icon="props">
-                <img
-                  class="img-icon"
-                  :src="
-                    props.checked ? activeIconWoman : inactiveIconWomanChecked
-                  "
-                />
-              </template>
-            </van-radio>
-          </van-radio-group>
-
+          <div class="sex">
+            <div
+              v-for="(item, ind) in sexList"
+              :class="item.type"
+              :key="ind"
+              @click="check(ind)"
+            >
+              <p v-if="item.check" :class="item.reclass" />
+            </div>
+          </div>
           <img
             src="../../assets/image/return_name.png"
             alt=""
@@ -74,17 +63,46 @@ export default {
       isFlag: false,
       sexType: '',
       nameVal: '',
-      activeIconMan: require('../../assets/image/man_checked.png'),
-      inactiveIconManChecked: require('../../assets/image/man_unchecked.png'),
-      activeIconWoman: require('../../assets/image/woman_checked.png'),
-      inactiveIconWomanChecked: require('../../assets/image/woman_unchecked.png'),
-      sexList: []
+      sexList: [
+        {
+          check: false,
+          type: 'men',
+          reclass: 'check-men',
+        },
+        {
+          check: false,
+          type: 'women',
+          reclass: 'check-women',
+        }
+      ]
     }
   },
-  mounted () { },
+  mounted () {
+    // this.get()
+    // let apiKey = '2WshDvM3a8682c1238af5a34f4eece5319e5a5637618bb7'
+    // let url = 'https://api.apishop.net/common/BMI/getStandardWeightTable?apiKey=' + apiKey
+    // this.$axios({
+    //   method: 'get',
+    //   url: url,
+    //   params: {
+    //     id: 1
+    //   }
+    // }).then((res) => {
+    //   console.log(res.data)
+    // })
+  },
   methods: {
     onTap () {
       this.isFlag = true
+    },
+    check (ind) {
+      console.log(ind, '%%%%%%%%%%')
+      this.sexType = ind == 0 ? '男' : ind == 1 ? '女' : '' //标记   男=1  女=2
+      console.log(this.sexType, '@###############')
+      this.sexList.map((item) => {
+        item.check = false
+      })
+      this.sexList[ind].check = true
     },
     onBindName () {
       if (!this.nameVal) {
@@ -98,6 +116,20 @@ export default {
       // this.$router.push(`/generateName`)
       this.$router.push({ path: '/generateName', query: { first_name: this.nameVal, is_new: 1, sex: this.sexType } })
     },
+    get () {
+      // let apiKey = '2WshDvM3a8682c1238af5a34f4eece5319e5a5637618bb7'
+      // let url = 'http://127.0.0.1:8000/api/ask_question/?token=4huf8Q6yTmFUv5oVW29J&question=马&is_new=1'
+      // let apiKey = '2WshDvM3a8682c1238af5a34f4eece5319e5a5637618bb7'
+      // let url = 'https://api.apishop.net/common/BMI/getStandardWeightTable?apiKey=' + apiKey
+      // this.axios.get(url)
+      //   .then(res => {
+      //     console.log(res)
+      //     this.data = res.data
+      //   })
+      // ++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+    }
   }
 }
 </script>
@@ -117,7 +149,7 @@ export default {
   height: 4rem;
 }
 .choose-block {
-  height: 100%;
+  height: 90%;
   position: absolute;
   bottom: 0;
   width: 100%;
@@ -189,12 +221,23 @@ export default {
   padding: 0 1.25rem;
   box-sizing: border-box;
 }
-/deep/.van-radio {
-  overflow: visible;
+.men {
+  background: url(../../assets/image/man_unchecked.png) no-repeat;
 }
-
-.img-icon {
-  width: 9.5rem;
+.women {
+  background: url(../../assets/image/woman_unchecked.png) no-repeat;
+}
+.check-men {
+  background: url(../../assets/image/man_checked.png) no-repeat;
+}
+.check-women {
+  background: url(../../assets/image/woman_checked.png) no-repeat;
+}
+.men,
+.check-men,
+.women,
+.check-women {
+  width: 10rem;
   height: 12.5rem;
   background-size: contain;
 }

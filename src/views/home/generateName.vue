@@ -12,10 +12,13 @@
         class="finger-mark"
       />
       <div class="loading-icon">
-        <van-loading type="spinner" color="#fff" size="50" />
+        <van-loading type="spinner" color="#fff" size="40" />
       </div>
     </div>
     <div v-else>
+      <div class="for-example" v-if="resDataList && resDataList.length">
+        {{ resDataList[0] }}
+      </div>
       <div
         v-for="(item, index) in nameList"
         :key="index"
@@ -25,76 +28,83 @@
           <div class="name">{{ item.name }}</div>
           <div class="mean">{{ item.mean }}</div>
           <div class="bun-icon">
-            <van-icon name="like" class="un-icon" color="#FFA3B9" size="20" />
+            <van-icon name="like" class="un-icon" color="#FFA3B9" size="14" />
           </div>
         </div>
         <div class="unchecked" v-else>
           <div class="un-name">{{ item.name }}</div>
           <div class="bun-icon">
-            <van-icon name="like-o" class="un-icon" color="#FFA3B9" size="20" />
+            <van-icon name="like-o" class="un-icon" color="#FFA3B9" size="14" />
           </div>
         </div>
       </div>
       <div class="more-btn">
-        <img src="../../assets/image/more_btn.png" alt="" class="more" />
+        <img
+          src="../../assets/image/more_btn.png"
+          alt=""
+          class="more"
+          @click="onSubmit()"
+        />
       </div>
     </div>
+    <van-overlay :show="isPayPopup" @click="show = false" :lock-scroll="false">
+      <div class="wrapper" @click.stop>
+        <!-- <div class="pay-popup"> </div>-->
+        <img src="../../assets/image/pay_bg.png" alt="" class="pay-bg" />
+        <img
+          src="../../assets/image/pay_success.png"
+          alt=""
+          class="pay-success"
+        />
+
+        <img
+          src="../../assets/image/pay_close.png"
+          alt=""
+          class="pay-close"
+          @click="onSubmit()"
+        />
+      </div>
+    </van-overlay>
   </div>
 </template>
 <script>
+import axios from 'axios'
 export default {
 
   data: () => {
     return {
       isLoading: true,
       show: true,
-      nameList: [
-        {
-          name: '张一',
-          check: false,
-          mean: '发货的时刻静静地思考回复靠的就是副科级时代华府可接受合肥会计的说法可接受的',
-        }, {
-          name: '张二',
-          check: false,
-          mean: '巨虎呼呼呼呼过一个月过一个月华府可接受合肥会计的说法可接受的',
-        }, {
-          name: '张三',
-          check: false,
-          mean: '稻田养鱼方法体验体验体验过关于过一个月可接受合肥会计的说法可接受的',
-        }, {
-          name: '张四',
-          check: false,
-          mean: '色让对方GV是以后不要不会可接受合肥会计的说法可接受的',
-        }, {
-          name: '张误',
-          check: false,
-          mean: '阿尔单元格沸腾鱼国有股急急急激烈的用途科级时代华府可接受合肥会计的说法可接受的',
-        },
-        // {
-        //   name: '张66',
-        //   check: false,
-        //   mean: '加热我空间改名为品几个人级时代华府可接受合肥会计的说法可接受的',
-        // }, {
-        //   name: '张77',
-        //   check: false,
-        //   mean: '色摸排能进不回家；判空【判空【 华府可接受合肥会计的说法可接受的',
-        // }, {
-        //   name: '张88',
-        //   check: false,
-        //   mean: '吧是好地方拘泥的发件人 华府可接受合肥会计的说法可接受的',
-        // }
-      ]
+      nameList: [],
+      resDataList: [],
+      isPayPopup: false
     }
   },
   mounted () {
-    setTimeout(() => {
-      this.isLoading = false
-    }, 2000)
+    let requestData = this.$route.query
+    console.log(requestData, '回复热')
+    this.getMyData(requestData)
+
   },
   methods: {
-    // onTap () {
-    //   this.$router.push(`/generatePage`)
-    // },
+    getMyData (requestData) {
+      let token = localStorage.getItem('name_token') || 'vhQ1ZWyof1GD80VyAu4e1'
+      const AJAX = axios.create({
+        timeout: 6000000,
+        responseType: 'json',
+        //withCredentials: true, // 是否允许带cookie这些
+        // headers: { 'Content-Type': 'application/json; charset=utf-8' }
+      })
+      AJAX.get('http://140.143.140.160/api/ask_question/', { params: { token: token, ...requestData } }).then(res => {
+        console.log(res.data, '==================>')
+        if (res.status == 200) {
+          this.isLoading = false
+          this.resDataList = res.data.data
+          this.changeList(res.data.data)
+          localStorage.setItem('name_token', res.data.token)
+        }
+      })
+    },
     onCheckName (ind) {
       console.log(ind, '%%%%%%%%%%')
       this.nameList.map((item) => {
@@ -102,6 +112,28 @@ export default {
       })
       this.nameList[ind].check = true
     },
+    changeList (data) {
+      let fixArray = this.curtail(data)
+      let rd = []
+      let flag
+      fixArray.map(res => {
+        flag = res.split('(')
+        rd.push({ name: flag[0], mean: '(' + flag[1], check: false })
+      })
+      this.nameList = rd
+      console.log(rd, 'iiiiiiii')
+    },
+    curtail (arr) {
+      var firstArr = arr.slice(0)
+      firstArr.splice(0, 1)
+      return firstArr
+    },
+    onSubmit () {
+      this.isPayPopup = !this.isPayPopup
+    },
+    onClose () {
+      this.isPayPopup = false
+    }
   }
 }
 </script>
@@ -111,15 +143,15 @@ export default {
   min-height: 100vh;
   background: url(../../assets/image/bg_2.png) no-repeat;
   background-size: cover;
-  padding: 2rem 0 0;
+  padding: 1rem 0 0;
 }
 .checked {
   width: 90%;
-  margin: 0rem auto 2rem;
+  margin: 0rem auto 1rem;
   height: auto;
-  padding: 1.5rem 2.5rem;
-  border-radius: 1.8rem;
-  background: rgba(255, 255, 255, 0.6);
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.4);
   flex-direction: column;
   color: white;
   display: flex;
@@ -127,30 +159,38 @@ export default {
   align-items: center;
 }
 .name {
-  font-size: 2.5rem;
+  font-size: 1.25rem;
+  font-weight: 400;
 }
 .mean {
-  font-size: 1.8rem;
-  padding: 1.5rem 0;
+  font-size: 0.9rem;
+  padding: 0.75rem 0;
 }
 .unchecked {
   width: 90%;
   color: white;
-  margin: 0rem auto 2rem;
-  height: 8rem;
-  padding: 1.5rem 2.5rem;
-  border-radius: 1.8rem;
-  background: rgba(255, 255, 255, 0.6);
+  margin: 0rem auto 1rem;
+  height: 4rem;
+  padding: 0.8rem 1.25rem;
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.4);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+.for-example {
+  padding: 0.8rem 1.25rem;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
 .un-name {
-  font-size: 2rem;
+  font-size: 1.2rem;
+  font-weight: 500;
 }
 .bun-icon {
-  width: 4rem;
-  height: 4rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
   background: #fff;
   display: flex;
@@ -160,7 +200,8 @@ export default {
 .more-btn {
   display: flex;
   justify-content: center;
-  margin-top: 7rem;
+  margin-top: 3.5rem;
+  height: 4rem;
 }
 
 /* .wrapper {
@@ -176,15 +217,49 @@ export default {
   background-color: #fff;
 } */
 .letter-card {
-  margin: 2rem 3rem;
+  margin: 1rem 1.5rem;
+  width: 10rem;
 }
 .finger-mark {
   display: block;
-  margin: 5rem auto 3rem;
-  width: 8rem;
+  margin: 2.5rem auto 1.5rem;
+  width: 4rem;
 }
 .loading-icon {
   display: flex;
   justify-content: center;
+}
+/* .pay-popup {
+  width: 80%;
+  height: 55%;
+  background: url(../../assets/image/pay_bg.png) no-repeat;
+  background-size: contain;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+} */
+.pay-bg {
+  width: 80%;
+  position: absolute;
+}
+.pay-close {
+  width: 3rem;
+  position: absolute;
+  bottom: 2rem;
+}
+/deep/.van-popup {
+  background-color: rgba(255, 255, 255, 0);
+}
+.pay-success {
+  width: 60%;
+  position: absolute;
+}
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  flex-direction: column;
+  position: relative;
 }
 </style>

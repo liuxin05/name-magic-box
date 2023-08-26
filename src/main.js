@@ -5,6 +5,7 @@ import router from './router'//路由
 import Vant from 'vant'
 import 'vant/lib/index.css'
 import './utils/axios'
+import './utils/rem'
 Vue.use(Vant)
 
 Vue.config.productionTip = false
