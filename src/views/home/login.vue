@@ -78,10 +78,13 @@ export default {
       inactiveIconManChecked: require('../../assets/image/man_unchecked.png'),
       activeIconWoman: require('../../assets/image/woman_checked.png'),
       inactiveIconWomanChecked: require('../../assets/image/woman_unchecked.png'),
-      sexList: []
+      sexList: [],
+      isFirstGiveName: null,
     }
   },
-  mounted () { },
+  mounted () {
+    this.isFirstGiveName = this.$route.query.is_again
+  },
   methods: {
     onTap () {
       this.isFlag = true
@@ -95,8 +98,9 @@ export default {
         this.$toast('请选择宝宝性别！')
         return
       }
+      let is_new = this.isFirstGiveName ? 0 : 1
       // this.$router.push(`/generateName`)
-      this.$router.push({ path: '/generateName', query: { first_name: this.nameVal, is_new: 1, sex: this.sexType } })
+      this.$router.push({ path: '/generateName', query: { first_name: this.nameVal, is_new: is_new, sex: this.sexType } })
     },
   }
 }

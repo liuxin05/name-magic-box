@@ -45,6 +45,13 @@
           class="more"
           @click="onSubmit()"
         />
+        <van-button
+          round
+          type="info"
+          icon="replay"
+          color="#07c160"
+          @click="toAgainName()"
+        ></van-button>
       </div>
     </div>
     <van-overlay :show="isPayPopup" @click="show = false" :lock-scroll="false">
@@ -131,8 +138,8 @@ export default {
     onSubmit () {
       this.isPayPopup = !this.isPayPopup
     },
-    onClose () {
-      this.isPayPopup = false
+    toAgainName () {
+      this.$router.push({ path: '/index', query: { is_again: true } })//继续起名时（is_new=0)
     }
   }
 }
@@ -202,6 +209,9 @@ export default {
   justify-content: center;
   margin-top: 3.5rem;
   height: 4rem;
+}
+.more {
+  margin-right: 0.3rem;
 }
 
 /* .wrapper {
