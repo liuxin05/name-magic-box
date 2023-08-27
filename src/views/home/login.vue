@@ -138,38 +138,38 @@ export default {
   /* background: pink url("../../assets/image/bg_1.png"); */
 }
 .input-your-name {
-  width: 15rem;
+  width: 85%;
   height: 2.5rem;
   background: white;
   position: absolute;
   left: 50%;
   transform: translate(-50%);
-  border-radius: 1.5rem;
+  border-radius: 1.8rem;
   top: 3.5rem;
-  width: 15.5rem;
-  height: 3rem;
-  padding: 0.6rem 1rem;
-  font-size: 0.7rem;
+  height: 4rem;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 ::-webkit-input-placeholder {
   /* WebKit browsers，webkit内核浏览器 */
   color: rgba(0, 0, 0, 0.4);
-  font-size: 0.7rem;
+  font-size: 1rem;
 }
 :-moz-placeholder {
   /* Mozilla Firefox 4 to 18 */
   color: rgba(0, 0, 0, 0.4);
-  font-size: 0.7rem;
+  font-size: 1rem;
 }
 ::-moz-placeholder {
   /* Mozilla Firefox 19+ */
   color: rgba(0, 0, 0, 0.4);
-  font-size: 0.7rem;
+  font-size: 1rem;
 }
 :-ms-input-placeholder {
   /* Internet Explorer 10+ */
   color: rgba(0, 0, 0, 0.4);
-  font-size: 0.7rem;
+  font-size: 1rem;
 }
 
 .text {

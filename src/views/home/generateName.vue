@@ -25,16 +25,22 @@
         @click="onCheckName(index)"
       >
         <div class="checked" v-if="item.check">
-          <div class="name">{{ item.name }}</div>
-          <div class="mean">{{ item.mean }}</div>
+          <!-- <div class="name">{{ item.name }}</div>
+          <div class="mean">{{ item.mean }}</div> -->
+          <div class="mean">{{ item.name }}</div>
           <div class="bun-icon">
-            <van-icon name="like" class="un-icon" color="#FFA3B9" size="14" />
+            <van-icon name="like" class="un-icon" color="#FFA3B9" size="1rem" />
           </div>
         </div>
         <div class="unchecked" v-else>
           <div class="un-name">{{ item.name }}</div>
           <div class="bun-icon">
-            <van-icon name="like-o" class="un-icon" color="#FFA3B9" size="14" />
+            <van-icon
+              name="like-o"
+              class="un-icon"
+              color="#FFA3B9"
+              size="1rem"
+            />
           </div>
         </div>
       </div>
@@ -122,10 +128,11 @@ export default {
     changeList (data) {
       let fixArray = this.curtail(data)
       let rd = []
-      let flag
+      // let flag
       fixArray.map(res => {
-        flag = res.split('(')
-        rd.push({ name: flag[0], mean: '(' + flag[1], check: false })
+        // flag = res.split('(')
+        // rd.push({ name: flag[0], mean: '(' + flag[1], check: false })
+        rd.push({ name: res, check: false })
       })
       this.nameList = rd
       console.log(rd, 'iiiiiiii')
@@ -170,7 +177,7 @@ export default {
   font-weight: 400;
 }
 .mean {
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   padding: 0.75rem 0;
 }
 .unchecked {
@@ -192,8 +199,12 @@ export default {
   font-weight: 600;
 }
 .un-name {
-  font-size: 1.2rem;
+  width: 75%;
+  font-size: 1.1rem;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .bun-icon {
   width: 2rem;
@@ -209,9 +220,11 @@ export default {
   justify-content: center;
   margin-top: 3.5rem;
   height: 4rem;
+  align-items: center;
 }
 .more {
   margin-right: 0.3rem;
+  height: 4rem;
 }
 
 /* .wrapper {
