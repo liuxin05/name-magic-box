@@ -19,14 +19,17 @@
       <div class="for-example" v-if="resDataList && resDataList.length">
         {{ resDataList[0] }}
       </div>
-      <div
+      <div class="checked" v-if="resSencodList && resSencodList.length">
+        <div class="name" v-for="(item, index) in resSencodList" :key="index">
+          {{ item }}
+        </div>
+      </div>
+      <!-- <div
         v-for="(item, index) in nameList"
         :key="index"
         @click="onCheckName(index)"
       >
         <div class="checked" v-if="item.check">
-          <!-- <div class="name">{{ item.name }}</div>
-          <div class="mean">{{ item.mean }}</div> -->
           <div class="mean">{{ item.name }}</div>
           <div class="bun-icon">
             <van-icon name="like" class="un-icon" color="#FFA3B9" size="1rem" />
@@ -43,21 +46,21 @@
             />
           </div>
         </div>
-      </div>
+      </div> -->
       <div class="more-btn">
         <img
           src="../../assets/image/more_btn.png"
           alt=""
           class="more"
-          @click="onSubmit()"
+          @click="toAgainName()"
         />
-        <van-button
+        <!-- <van-button
           round
           type="info"
           icon="replay"
           color="#07c160"
           @click="toAgainName()"
-        ></van-button>
+        ></van-button> -->
       </div>
     </div>
     <van-overlay :show="isPayPopup" @click="show = false" :lock-scroll="false">
@@ -90,18 +93,18 @@ export default {
       show: true,
       nameList: [],
       resDataList: [],
+      resSencodList: [],
       isPayPopup: false
     }
   },
   mounted () {
     let requestData = this.$route.query
-    console.log(requestData, '回复热')
+    console.log(requestData, '查询条件')
     this.getMyData(requestData)
-
   },
   methods: {
     getMyData (requestData) {
-      let token = localStorage.getItem('name_token') || 'vhQ1ZWyof1GD80VyAu4e1'
+      let token = localStorage.getItem('name_token') || ''
       const AJAX = axios.create({
         timeout: 6000000,
         responseType: 'json',
@@ -109,13 +112,18 @@ export default {
         // headers: { 'Content-Type': 'application/json; charset=utf-8' }
       })
       AJAX.get('http://140.143.140.160/api/ask_question/', { params: { token: token, ...requestData } }).then(res => {
-        console.log(res.data, '==================>')
+        console.log(res.data, '==================>返回数据')
         if (res.status == 200) {
           this.isLoading = false
           this.resDataList = res.data.data
+          this.resSencodList = this.curtail(res.data.data)
           this.changeList(res.data.data)
-          localStorage.setItem('name_token', res.data.token)
+          localStorage.setItem('resetting_name', false)
+          // localStorage.setItem('name_token', res.data.token)
         }
+      }).catch(() => {
+        this.$toast('请求错误！')
+        return
       })
     },
     onCheckName (ind) {
@@ -145,8 +153,9 @@ export default {
     onSubmit () {
       this.isPayPopup = !this.isPayPopup
     },
-    toAgainName () {
-      this.$router.push({ path: '/index', query: { is_again: true } })//继续起名时（is_new=0)
+    toAgainName () {//重复起名一律重新选条件，那is_new就一直为1，没有为0的情况
+      localStorage.setItem('resetting_name', true)
+      this.$router.push({ path: '/index' })
     }
   }
 }
@@ -163,17 +172,17 @@ export default {
   width: 90%;
   margin: 0rem auto 1rem;
   height: auto;
-  padding: 0.75rem 1.25rem;
+  padding: 1.5rem 1.25rem;
   border-radius: 0.9rem;
   background: rgba(255, 255, 255, 0.4);
   flex-direction: column;
   color: white;
-  display: flex;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
 }
 .name {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 400;
 }
 .mean {

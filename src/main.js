@@ -6,6 +6,11 @@ import Vant from 'vant'
 import 'vant/lib/index.css'
 import './utils/axios'
 import './utils/rem'
+// 导入图片预加载方法以及图片列表
+import { imgsPreloader } from './utils/imgPreloader.js'
+import imgPreloaderList from './utils/imgPreloaderList.js'
+imgsPreloader(imgPreloaderList)
+
 Vue.use(Vant)
 
 Vue.config.productionTip = false

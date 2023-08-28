@@ -68,6 +68,7 @@
   </div>
 </template>
 <script>
+import axios from 'axios'
 export default {
   data: () => {
     return {
@@ -79,13 +80,44 @@ export default {
       activeIconWoman: require('../../assets/image/woman_checked.png'),
       inactiveIconWomanChecked: require('../../assets/image/woman_unchecked.png'),
       sexList: [],
-      isFirstGiveName: null,
+      isFirstGiveName: true,
+      is_new: '',
+      reset_name: ''
     }
   },
   mounted () {
-    this.isFirstGiveName = this.$route.query.is_again
+    this.resetting_name = localStorage.getItem('resetting_name')
+    console.log(!this.resetting_name)
+    if (!this.resetting_name) {
+      this.getLoginToken()
+    }
+
   },
   methods: {
+    getLoginToken () {
+      const AJAX = axios.create({
+        timeout: 6000000,
+        responseType: 'json',
+        //withCredentials: true, // 是否允许带cookie这些
+        // headers: { 'Content-Type': 'application/json; charset=utf-8' }
+      })
+      AJAX.get('http://140.143.140.160/api/ask_question/', { params: { sid: this.generateUUID(), is_new: 1 } }).then(res => {
+        console.log(res.data, '==================>')
+        if (res.status == 200) {
+          localStorage.setItem('name_token', res.data.token)
+          localStorage.setItem('resetting_name', false)
+        }
+      })
+    },
+    generateUUID () {
+      var d = new Date().getTime()
+      var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (d + Math.random() * 16) % 16 | 0
+        d = Math.floor(d / 16)
+        return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16)
+      })
+      return uuid
+    },
     onTap () {
       this.isFlag = true
     },
@@ -98,9 +130,8 @@ export default {
         this.$toast('请选择宝宝性别！')
         return
       }
-      let is_new = this.isFirstGiveName ? 0 : 1
-      // this.$router.push(`/generateName`)
-      this.$router.push({ path: '/generateName', query: { first_name: this.nameVal, is_new: is_new, sex: this.sexType } })
+
+      this.$router.push({ path: '/generateName', query: { first_name: this.nameVal, is_new: 1, sex: this.sexType } })
     },
   }
 }
